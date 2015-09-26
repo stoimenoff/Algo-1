@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun 30 13:08:49 2015
+Created on Tue Jun 30 15:15:12 2015
 
 @author: stoimenoff
 """
@@ -77,42 +77,47 @@ class Queue:
     def size(self):
         return self.size
 
-class ClosestCoffeeStore:
-
-    # Finds the closest coffee store to a point.
-    # graph - [[bool]]
-    # starting_point - int
-    # is_coffee_store - [bool]
-    def closestCoffeeStore(self, graph, is_coffee_store, starting_point):
-        verts = Queue()
-        verts.push(starting_point)
-        verts.push(-1)
+class PhoneNumbers:
+    def min_phone_calls(self, graph):
+        min_phone_calls = 0
         visited = [0] * len(graph)
-        visited[starting_point] = 1
-        distance = 0
-        while verts.size != 0:
-            vert = verts.pop()
-            if vert == -1:
-                distance += 1
-                if verts.size != 0:
-                    verts.push(-1)
-                continue
-            if is_coffee_store[vert] == 1:
-                return distance
-            else:
-                for i in range(len(graph)):
-                    if graph[vert][i] == 1 and visited[i] == 0:
-                        verts.push(i)
+        visited_num = 0
+        to_visit = Queue()
+        #visit 0
+        to_visit.push(0)
+        visited[0] = 1
+        while visited_num != len(graph):
+            visiting = to_visit.pop()
+            visited_num += 1
+            for i in range(len(graph)):
+                if graph[visiting][i] == 1 and visited[i] == 0:
+                    to_visit.push(i)
+                    visited[i] = 1
+            if to_visit.size == 0:
+                min_phone_calls += 1
+                for i in range(len(visited)):
+                    if visited[i] == 0:
+                        to_visit.push(i)
                         visited[i] = 1
-        return -1
-        
+                        break
+        return min_phone_calls
+
+
 def main():
-    n = int(input())
+    phone_book = {}
     graph = []
-    for i in range(n):
-        row = [int(num) for num in input().split()]
-        graph.append(row)
-    starting_point = int(input())
-    is_coffee_store = [int(num) for num in input().split()]
-    print(ClosestCoffeeStore().closestCoffeeStore(graph, is_coffee_store, starting_point))
+    k = int(input())
+    phones = [int(n) for n in input().split()]
+    i = 0
+    for phone in phones:
+        phone_book[phone] = i
+        i += 1
+    for i in range(k):
+        line = [int(n) for n in input().split()]
+        phones_of_i = [0] * k
+        for phone in line[1:]:
+            phones_of_i[phone_book[phone]] = 1
+        graph.append(phones_of_i)
+    print (PhoneNumbers().min_phone_calls(graph))
 main()
+    
